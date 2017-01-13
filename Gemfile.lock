@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    geocoder (1.4.1)
+    google_timezone (0.0.5)
+    redis (3.3.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  geocoder
+  google_timezone
+  redis
+
+BUNDLED WITH
+   1.11.2
