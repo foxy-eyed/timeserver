@@ -1,19 +1,22 @@
 require 'geocoder'
 require 'google_timezone'
 require 'redis'
+require 'tzinfo'
 
 class TimeConverter
-  attr_reader :locations, :result
+  attr_reader :current_utc, :locations, :output_format, :result
 
-  def initialize(locations = [])
+  def initialize(locations = [], output_format = '%Y-%m-%d %H:%M:%S')
+    @current_utc = Time.now.utc
     @locations = locations
+    @output_format = output_format
   end
 
   def run
-    @result = []
+    @result = ["UTC: #{current_utc.strftime output_format}"]
     locations.each do |location|
       time_zone = fetch_tz(location)
-      result << "#{location}: #{time_zone.inspect}" unless time_zone.nil?
+      result << "#{location}: #{apply_tz(time_zone)}"
     end
   end
 
@@ -46,5 +49,11 @@ class TimeConverter
     end
     Geocoder.configure(config)
     Geocoder.coordinates(location)
+  end
+
+  def apply_tz(time_zone)
+    return 'unknown' if time_zone.nil?
+    tz = TZInfo::Timezone.get(time_zone)
+    tz.utc_to_local(current_utc).strftime(output_format)
   end
 end

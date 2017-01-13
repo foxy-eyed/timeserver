@@ -4,6 +4,11 @@ GEM
     geocoder (1.4.1)
     google_timezone (0.0.5)
     redis (3.3.2)
+    thread_safe (0.3.5)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
+    tzinfo-data (1.2016.10)
+      tzinfo (>= 1.0.0)
 
 PLATFORMS
   ruby
@@ -12,6 +17,8 @@ DEPENDENCIES
   geocoder
   google_timezone
   redis
+  tzinfo
+  tzinfo-data
 
 BUNDLED WITH
    1.11.2

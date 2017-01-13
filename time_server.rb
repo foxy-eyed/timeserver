@@ -6,7 +6,8 @@ loop do
   Thread.start(server.accept) do |client|
     converter = TimeConverter.new(['Moscow', 'New York'])
     converter.run
-    client.puts converter.result.join("\n")
+    puts converter.result.join("\n")
+    # client.puts converter.result.join("\n")
     client.close
   end
 end
