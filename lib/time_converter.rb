@@ -10,17 +10,31 @@ class TimeConverter
     @current_utc = Time.now.utc
     @locations = locations
     @output_format = output_format
+    @cache = Redis.new
   end
 
   def run
     @result = ["UTC: #{current_utc.strftime output_format}"]
     locations.each do |location|
-      time_zone = fetch_tz(location)
+      time_zone = time_zone(location)
       result << "#{location}: #{apply_tz(time_zone)}"
     end
   end
 
   private
+
+  def time_zone(location)
+    time_zone = @cache.get(cache_key_for(location))
+    time_zone = fetch_tz(location) if time_zone.nil?
+    time_zone
+  end
+
+  def cache_key_for(location)
+    key = location.downcase
+    key.gsub!(/[[:punct:]]/, '_'.freeze)
+    key.gsub!(/[\s]/, '_'.freeze)
+    ['city:', key].join
+  end
 
   def fetch_tz(location)
     coordinates = geocode(location)
@@ -29,6 +43,7 @@ class TimeConverter
     gtz = request_gtz(coordinates)
     return unless gtz.success?
 
+    @cache.set(cache_key_for(location), gtz.time_zone_id)
     gtz.time_zone_id
   end
 
@@ -41,7 +56,7 @@ class TimeConverter
   def geocode(location)
     config = {
         lookup: :google,
-        cache: Redis.new
+        cache: @cache
     }
     if ENV['API_KEY']
       config[:api_key] = ENV['API_KEY']
