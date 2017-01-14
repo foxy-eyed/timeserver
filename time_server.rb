@@ -1,12 +1,13 @@
 require 'socket'
+require_relative 'lib/server'
 require_relative 'lib/time_converter'
 
-server = TCPServer.new 2000
-loop do
-  Thread.start(server.accept) do |client|
+class TimeServer < Server
+  def serve(client)
     converter = TimeConverter.new(['Moscow', 'New York'])
     converter.run
     client.puts converter.result.join("\n")
-    client.close
   end
 end
+
+TimeServer.new(2000)
