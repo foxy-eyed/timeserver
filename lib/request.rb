@@ -20,20 +20,12 @@ class Request
   end
 
   def extract_path
-    @path = data.first.split(' ')[1]
+    @path = socket.gets.chomp.split(' ')[1]
   end
 
   def extract_params
     @params = []
     query = URI.parse(@path).query
     @params = URI.decode(query).split(',') if query
-  end
-
-  def data
-    data = []
-    while (line = socket.gets).chomp! != ''
-      data << line
-    end
-    data
   end
 end
