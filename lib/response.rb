@@ -19,10 +19,14 @@ class Response
   end
 
   def send_response(socket)
+    socket << prepare
+  end
+
+  def prepare
     data = "HTTP/1.1 #{status} #{MESSAGES[status]} #{CRLF}"
     @header.each { |key, value| data << "#{key}: #{value}" << CRLF }
     data << CRLF
     data << body unless body.nil?
-    socket << data
+    data
   end
 end

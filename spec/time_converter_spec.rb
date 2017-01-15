@@ -1,5 +1,5 @@
 require 'tzinfo'
-require_relative '../lib/time_converter'
+require 'spec_helper'
 
 RSpec.describe TimeConverter do
   describe '#run' do
