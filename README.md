@@ -32,5 +32,5 @@ New York: 2015-04-11 02:30:50
     * Activate Google Maps Geocoding API.
     * Activate Google Maps Time Zone API.
     * Set API key value as environment variable: `ENV['API_KEY']`.
-* Run `ruby time_sever.rb` to start server.
+* Run `ruby main.rb` to start server.
 * Now you can open in browser [http://localhost:2000](http://localhost:2000) to check how it works.
