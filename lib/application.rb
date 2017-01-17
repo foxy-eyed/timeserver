@@ -14,7 +14,7 @@ class Application
     else
       response = Response.new(404, 'Not Found')
     end
-  rescue Exception => e
+  rescue => e
     response = Response.new(500, e.message)
   ensure
     response.send_response(client)
