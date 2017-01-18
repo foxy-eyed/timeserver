@@ -1,10 +1,10 @@
-Dir['./lib/*.rb'].each { |f| require f }
-
 class TimeServer < Server
+  def self.cache
+    @cache ||= Cache.new
+  end
+
   def serve(client)
     app = Application.new(client)
     app.run
   end
 end
-
-TimeServer.new(2000)

@@ -1,6 +1,5 @@
 require 'geocoder'
 require 'google_timezone'
-require 'redis'
 require 'tzinfo'
 
 class TimeConverter
@@ -10,7 +9,6 @@ class TimeConverter
     @current_utc = Time.now.utc
     @locations = locations
     @output_format = output_format
-    @cache = Redis.new
   end
 
   def run
@@ -24,16 +22,9 @@ class TimeConverter
   private
 
   def time_zone(location)
-    time_zone = @cache.get(cache_key_for(location))
+    time_zone = TimeServer.cache.get(location)
     time_zone = fetch_tz(location) if time_zone.nil?
     time_zone
-  end
-
-  def cache_key_for(location)
-    key = location.downcase
-    key.gsub!(/[[:punct:]]/, '_'.freeze)
-    key.gsub!(/[\s]/, '_'.freeze)
-    ['city:', key].join
   end
 
   def fetch_tz(location)
@@ -43,7 +34,7 @@ class TimeConverter
     gtz = request_gtz(coordinates)
     return unless gtz.success?
 
-    @cache.set(cache_key_for(location), gtz.time_zone_id)
+    TimeServer.cache.set(location, gtz.time_zone_id)
     gtz.time_zone_id
   end
 
@@ -56,7 +47,7 @@ class TimeConverter
   def geocode(location)
     config = {
         lookup: :google,
-        cache: @cache
+        cache: TimeServer.cache
     }
     if ENV['API_KEY']
       config[:api_key] = ENV['API_KEY']
